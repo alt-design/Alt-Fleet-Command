@@ -1,0 +1,28 @@
+{
+  "name": "alt-design/alt-fleet-command",
+  "description": "A package to help control instanced Laravel Apps.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Benammi Swift",
+      "email": "benammi@alt-design.net",
+      "homepage": "<https://alt-design.net/>"
+    }
+  ],
+  "keywords": ["Laravel", "Blade", "Instances"],
+  "require": {
+    "illuminate/support": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "AltDesign\\FleetCommand\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AltDesign\\FleetCommand\\FleetCommandServiceProvider"
+      ]
+    }
+  }
+}
