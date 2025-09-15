@@ -14,16 +14,15 @@ class OAuthController
     public function oauthRedirect(
         Request $request
     ) {
-
         session()->put('oauth.state', $state = Str::random(40));
 
-        return redirect()->to(sprintf(
+        return redirect()->to( sprintf(
             '%soauth/authorize?client_id=%s&redirect_uri=%s&scope=&response_type=code&state=%s',
             Str::finish(
-                config('services.laravelpassport.host'),
+                config('alt-fleet-cmd.oauth.host'),
                 '/'),
-            config('services.laravelpassport.client_id'),
-            config('services.laravelpassport.redirect'),
+            config('alt-fleet-cmd.oauth.client_id'),
+            config('alt-fleet-cmd.oauth.redirect'),
             $state
         ));
     }
@@ -36,11 +35,11 @@ class OAuthController
         ]);
 
         $tokenResponse = Http::asForm()->post(
-            config('services.laravelpassport.host') . 'oauth/token', [
+            config('alt-fleet-cmd.oauth.host') . 'oauth/token', [
             'grant_type' => 'authorization_code',
-            'client_id' => config('services.laravelpassport.client_id'),
-            'client_secret' => config('services.laravelpassport.client_secret'),
-            'redirect_uri' => config('services.laravelpassport.redirect'),
+            'client_id' => config('alt-fleet-cmd.oauth.client_id'),
+            'client_secret' => config('alt-fleet-cmd.oauth.client_secret'),
+            'redirect_uri' => config('alt-fleet-cmd.oauth.redirect'),
             'code' => $request->get('code'),
         ]);
 
@@ -59,11 +58,10 @@ class OAuthController
             );
         }
 
-        if ($user = OAuthToken::make(
+        OAuthToken::make(
             $tokenResponse->json()
-        )->updateUserFromOAuth()) {
-            Auth::login($user);
-        }
+        )->toSession();
+
         return redirect()->to('/');
     }
 }
