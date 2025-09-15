@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class OAuthController
 {
-    public function oauthRedirect(
+    public function redirect(
         Request $request
     ) {
         session()->put('oauth.state', $state = Str::random(40));
@@ -27,7 +27,7 @@ class OAuthController
         ));
     }
 
-    public function laravelPassportCallback(
+    public function callback(
         Request $request
     ) {
         $request->validate([
