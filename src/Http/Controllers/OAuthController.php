@@ -1,6 +1,6 @@
 <?php
 
-namespace AltDesign\FleetCommand\Auth;
+namespace AltDesign\FleetCommand\Http\Controllers;
 
 use AltDesign\FleetCommand\Models\OAuthToken;
 use Illuminate\Http\Request;
