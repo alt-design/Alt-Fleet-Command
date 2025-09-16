@@ -14,3 +14,10 @@ Route::prefix('oauth')->group( function () {
     )->name('alt-fleet-cmd.oauth.callback');
 });
 
+Route::prefix('alt-fleet-cmd/users')->group( function () {
+    Route::post(
+        '/create',
+        [AltDesign\FleetCommand\Http\Controllers\Instance\UserController::class, 'create']
+    )->name('alt-fleet-cmd.users.create');
+});
+
