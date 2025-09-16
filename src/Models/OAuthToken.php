@@ -32,7 +32,7 @@ class OAuthToken extends Model
 
     public function toSession(): self
     {
-        session()->put('oauth.token_id', $tokenModel->id);
+        session()->put('oauth.token_id', $this->id);
         return $this;
     }
 
