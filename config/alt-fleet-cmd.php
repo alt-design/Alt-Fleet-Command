@@ -11,4 +11,8 @@ return [
         'host' => env('FLEET_COMMAND_CENTRAL_URL'),
         'redirect' => Str::finish(env('APP_URL'), '/') . 'oauth/callback',
     ],
+
+    'instance' => [
+        'user_model' => 'App\Models\User'
+    ],
 ];
