@@ -15,5 +15,10 @@ return [
     'instance' => [
         'user_model' => 'App\Models\User',
         'api_key' => env('FLEET_COMMAND_INSTANCE_API_KEY', null),
+        'central_url' => env('FLEET_COMMAND_CENTRAL_URL'),
     ],
+
+    'central' => [
+        'passport_auth_guard' => 'auth:api',
+    ]
 ];
