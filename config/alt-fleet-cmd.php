@@ -13,6 +13,7 @@ return [
     ],
 
     'instance' => [
-        'user_model' => 'App\Models\User'
+        'user_model' => 'App\Models\User',
+        'api_key' => env('FLEET_COMMAND_INSTANCE_API_KEY', null),
     ],
 ];
