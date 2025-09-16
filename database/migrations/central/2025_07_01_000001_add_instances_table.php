@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('instances', function (Blueprint $table) {
             $table->uuid();
             $table->string('name')->unique();
-            $table->string('client_id')->unique();
             $table->string('base_url')->unique();
+            $table->uuid('client_id')->unique();
+            $table->string('api_key');
             $table->timestamps();
         });
     }
