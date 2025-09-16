@@ -12,6 +12,7 @@ class FleetCommandServiceProvider extends ServiceProvider
     {
         $this->publishMigrations()
             ->publishConfiguration()
+            ->loadMiddlewares()
             ->loadRoutes();
     }
 
@@ -51,6 +52,16 @@ class FleetCommandServiceProvider extends ServiceProvider
                 throw new \Exception('Invalid Fleet Command Configuration : Please use instance or central');
         }
 
+        return $this;
+    }
+
+    public function loadMiddlewares(): self
+    {
+        $router = $this->app['router'];
+        $router->aliasMiddleware(
+            'validate.central',
+            \AltDesign\FleetCommand\Http\Middleware\ValidateRequestFromCentral::class
+        );
         return $this;
     }
 
