@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AltDesign\FleetCommand\Http\Controllers;
 
 use AltDesign\FleetCommand\Models\OAuthToken;
+use AltDesign\FleetCommand\Services\Instance\GetOAuthUserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -60,10 +61,30 @@ class OAuthController
             );
         }
 
-        OAuthToken::make(
+        $tokenModel = OAuthToken::make(
             $tokenResponse->json()
         )->toSession();
 
-        return redirect()->to('/');
+        $request->session()->save();
+
+        $userResponse = new GetOAuthUserService($tokenModel->access_token)();
+        if (!$userResponse->successful()) {
+            return redirect()->route('login')->withErrors('OAuth Error', 'Something went wrong getting user');
+        }
+
+        $userData = $userResponse->json();
+        $userModelConfig = config('alt-fleet-cmd.instance.user_model');
+        if (!$userData['id']) {
+            return redirect()->route('login')->withErrors('OAuth Error', 'User ID not found from Central');
+        }
+
+        if (!$user = $userModelConfig::find($userData['id'])) {
+            return redirect()->route('login')->withErrors('OAuth Error', 'User not found on Instance');
+        }
+
+        $user->update($userData);
+        Auth::login($user);
+
+        return redirect()->to('/dashboard');
     }
 }
