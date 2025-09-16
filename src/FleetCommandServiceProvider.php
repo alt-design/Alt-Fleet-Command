@@ -18,8 +18,12 @@ class FleetCommandServiceProvider extends ServiceProvider
     public function publishMigrations(): self
     {
         $this->publishes([
-            __DIR__ . '/../database/migrations/' => database_path('migrations/alt-fleet-command'),
-        ], 'alt-fleet-cmd-migrations');
+            __DIR__ . '/../database/migrations/central/' => database_path('migrations/alt-fleet-cmd'),
+        ], 'alt-fleet-cmd-central-migrations');
+
+        $this->publishes([
+            __DIR__ . '/../database/migrations/instance/' => database_path('migrations/alt-fleet-cmd'),
+        ], 'alt-fleet-cmd-instance-migrations');
 
         return $this;
     }
