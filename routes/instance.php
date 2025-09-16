@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('oauth')
+    ->middleware('web')
     ->group( function () {
         Route::get(
             '/redirect',
