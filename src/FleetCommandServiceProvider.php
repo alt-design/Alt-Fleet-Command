@@ -27,7 +27,7 @@ class FleetCommandServiceProvider extends ServiceProvider
     public function publishConfiguration(): self
     {
         $this->publishes([
-            __DIR__ . '/../database/migrations/' => config_path('alt-fleet-cmd.php'),
+            __DIR__ . '/../config/alt-fleet-cmd.php' => config_path('alt-fleet-cmd.php'),
         ], 'alt-fleet-cmd-config');
 
         return $this;
