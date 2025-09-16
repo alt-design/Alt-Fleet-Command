@@ -2,5 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/oauth/redirect', [AltDesign\FleetCommand\Auth\OAuthController::class, 'redirect']);
-Route::get('/oauth/callback', [AltDesign\FleetCommand\Auth\OAuthController::class, 'callback']);
+Route::prefix('oauth')->group( function () {
+    Route::get(
+        '/redirect',
+        [AltDesign\FleetCommand\Http\Controllers\OAuthController::class, 'redirect']
+    )->name('alt-fleet-cmd.oauth.redirect');
+
+    Route::get(
+        '/callback',
+        [AltDesign\FleetCommand\Http\Controllers\OAuthController::class, 'callback']
+    )->name('alt-fleet-cmd.oauth.callback');
+});
+
