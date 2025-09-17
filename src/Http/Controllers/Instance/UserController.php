@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace AltDesign\FleetCommand\Http\Controllers\Instance;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class UserController
 {
-    public function create(
-        Request $request
-    ): mixed {
-
+    public function create( Request $request ): JsonResponse
+    {
         $validatedData = $request->validate([
             'id' => 'required',
             'name' => 'string|required',
@@ -21,10 +20,40 @@ class UserController
         $userModel = config('alt-fleet-cmd.instance.user_model');
 
         if ($userModel::find($validatedData['id'])) {
-            return response(json_encode(['message' => 'User already exists']), 400);
+            return response()->json([
+                'message' => 'User already exists.',
+            ], 400);
         }
 
-        $userModel::create($validatedData);
-        return response("User Created", 200);
+        $user = new $userModel();
+        $user->fill($validatedData);
+        $user->id = $validatedData['id'];
+        $user->save();
+
+        return response()->json([
+            'message' => 'User created.',
+        ]);
+    }
+
+    public function delete(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => ['required', 'integer'],
+        ]);
+
+        $userModel = config('alt-fleet-cmd.instance.user_model');
+
+        $user = $userModel::find($validated['id']);
+        if (! $user) {
+            return response()->json([
+                'message' => 'User not found.',
+            ], 400);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'User deleted.',
+        ]);
     }
 }
