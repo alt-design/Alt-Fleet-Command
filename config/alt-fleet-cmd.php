@@ -19,6 +19,7 @@ return [
     ],
 
     'central' => [
+        'user_model' => 'App\Models\User',
         'passport_auth_guard' => 'auth:api',
     ]
 ];
