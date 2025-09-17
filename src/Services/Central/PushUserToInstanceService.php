@@ -6,6 +6,7 @@ namespace AltDesign\FleetCommand\Services\Central;
 
 use AltDesign\FleetCommand\DTO\UserDTO;
 use AltDesign\FleetCommand\Models\Instance;
+use AltDesign\FleetCommand\Models\InstanceUser;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -19,6 +20,8 @@ class PushUserToInstanceService
     }
     public function __invoke(): mixed
     {
+        InstanceUser::grant($this->user, $this->instance);
+
         return Http::withToken(
             $this->instance->api_key
         )->post(
