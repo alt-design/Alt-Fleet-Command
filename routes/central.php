@@ -1,6 +1,6 @@
 <?php
 
-use AltDesign\FleetCommand\Http\Controllers\Central\OAuthController;
+use AltDesign\FleetCommand\Http\Controllers\Central\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('alt-fleet-cmd/oauth')
@@ -8,6 +8,6 @@ Route::prefix('alt-fleet-cmd/oauth')
     ->group(function () {
     Route::get(
         '/get-user',
-        [OAuthController::class, 'getUser']
+        [UserController::class, 'fetch']
     );
 });
