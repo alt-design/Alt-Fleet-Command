@@ -18,7 +18,7 @@ class GetOAuthUserService
         return Http::withToken($this->access_token)
             ->get(
                 Str::finish(config('alt-fleet-cmd.instance.central_url'), "/") .
-                    "alt-fleet-cmd/oauth/get-user"
+                "alt-fleet-cmd/oauth/get-user?instance_url=" . urlencode(config('app.url'))
             );
     }
 }
