@@ -23,5 +23,10 @@ Route::prefix('alt-fleet-cmd/users')
             '/create',
             [AltDesign\FleetCommand\Http\Controllers\Instance\UserController::class, 'create']
         )->name('alt-fleet-cmd.users.create');
+
+        Route::delete(
+            '/delete',
+            [AltDesign\FleetCommand\Http\Controllers\Instance\UserController::class, 'delete']
+        )->name('alt-fleet-cmd.users.create');
     });
 
