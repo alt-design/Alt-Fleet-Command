@@ -42,6 +42,17 @@ class InstanceUser extends Model
             ->delete();
     }
 
+    public static function getUserInstance(
+        UserDTO $user,
+        Instance $instance,
+    ): mixed
+    {
+        return self::query()
+            ->where('instance_id', $instance->id)
+            ->where('user_id', $user->toArray()['id'])
+            ->first();
+    }
+
     public function user(): HasOne
     {
         return $this->hasOne(config('alt-fleet-cmd.central.user_model'), 'id', 'user_id');
