@@ -41,7 +41,11 @@ class FleetCommandServiceProvider extends ServiceProvider
     public function loadRoutes(): self
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/common.php');
-        switch (config('alt-fleet-cmd.configuration')) {
+        $packageConfig = config('alt-fleet-cmd.configuration');
+        if (!$packageConfig && ("testing" == env("APP_ENV"))) {
+            $packageConfig = env("FLEET_COMMAND_CONFIGURATION");;
+        }
+        switch ($packageConfig) {
             case 'instance':
                 $this->loadRoutesFrom(__DIR__ . '/../routes/instance.php');
                 break;

@@ -31,7 +31,6 @@ class UserController
             email: $user->email
         );
 
-
         $decodedInstanceUrl = urldecode($validatedData['instance_url']);
         $strippedURL = Str::after($decodedInstanceUrl, '://');
 
@@ -58,5 +57,31 @@ class UserController
         }
 
         return response()->json($user);
+    }
+
+    public function update(Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'user' => 'required|string'
+        ]);
+
+        $userModel = config('alt-fleet-cmd.central.user_model');
+        $user = $userModel::find($validatedData['user']);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found.',
+            ], 400);
+        }
+
+        $fields = json_decode($request->get('fields'), true);
+        foreach ($fields as $key => $value) {
+            $user->{$key} = $value;
+        }
+        $user->save();
+
+        return response()->json([
+            'message' => 'User updated.',
+        ], 200);
     }
 }
