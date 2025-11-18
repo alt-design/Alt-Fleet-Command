@@ -38,7 +38,7 @@ class ProvisionInstance extends Command
         }
         $central = rtrim((string) config('alt-fleet-cmd.instance.central_url'), '/');
         $secret = (string) config('alt-fleet-cmd.provisioning.secret');
-        $appUrl = Str::finish((string) env('APP_URL'), '/');
+        $appUrl = Str::finish((string) config('app.url'), '/');
         $name = (string) env('APP_NAME', 'Unnamed Instance');
 
         if (! $central) {
