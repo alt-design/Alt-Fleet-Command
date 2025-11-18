@@ -7,11 +7,9 @@ namespace AltDesign\FleetCommand\Http\Controllers\Central;
 use AltDesign\FleetCommand\DTO\UserDTO;
 use AltDesign\FleetCommand\Models\Instance;
 use AltDesign\FleetCommand\Models\InstanceUser;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class UserController
@@ -20,7 +18,7 @@ class UserController
     {
         // Validate the incoming request data.
         $validatedData = $request->validate([
-            'instance_url' => 'required|url'
+            'instance_url' => 'required|url',
         ]);
 
         // Get the authenticated user and convert it to a UserDTO instance.
@@ -35,10 +33,10 @@ class UserController
         $strippedURL = Str::after($decodedInstanceUrl, '://');
 
         // If the user is not authenticated, return a 401 Unauthorized response.
-        $instance = Instance::where('base_url', Str::finish('http://' . $strippedURL, '/'))
-            ->orWhere('base_url', Str::finish('https://' . $strippedURL, '/'))
+        $instance = Instance::where('base_url', Str::finish('http://'.$strippedURL, '/'))
+            ->orWhere('base_url', Str::finish('https://'.$strippedURL, '/'))
             ->first();
-        if (!$instance) {
+        if (! $instance) {
             return response()->json([
                 'message' => 'Invalid Instance URL.',
             ], 400);
@@ -50,7 +48,7 @@ class UserController
             instance: $instance,
         );
 
-        if (!$instanceUser) {
+        if (! $instanceUser) {
             return response()->json([
                 'message' => 'Instance User record not found.',
             ], 401);
@@ -62,13 +60,13 @@ class UserController
     public function update(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
-            'user' => 'required|string'
+            'user' => 'required|string',
         ]);
 
         $userModel = config('alt-fleet-cmd.central.user_model');
         $user = $userModel::find($validatedData['user']);
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'message' => 'User not found.',
             ], 400);

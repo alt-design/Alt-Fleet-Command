@@ -6,22 +6,22 @@ namespace AltDesign\FleetCommand\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 
 class OAuthToken extends Model
 {
     use HasFactory;
 
     protected $table = 'oauth_tokens';
+
     protected $guarded = [];
+
     protected $casts = [
-        'expires_at' => 'datetime'
+        'expires_at' => 'datetime',
     ];
 
     public static function make(
         array $data
-    ):self {
+    ): self {
         return self::create([
             'token_type' => $data['token_type'],
             'access_token' => $data['access_token'],
@@ -33,6 +33,7 @@ class OAuthToken extends Model
     public function toSession(): self
     {
         session()->put('oauth.token_id', $this->id);
+
         return $this;
     }
 
