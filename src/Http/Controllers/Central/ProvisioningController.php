@@ -113,12 +113,12 @@ class ProvisioningController
             $client->save();
 
             // Create central record of the instance
-            $instance = new Instance;
-            $instance->name = $name;
-            $instance->base_url = $baseUrl;
-            $instance->client_id = $clientId;
-            $instance->api_key = $apiKey;
-            $instance->save();
+            Instance::create([
+                'name' => $name,
+                'base_url' => $baseUrl,
+                'client_id' => $clientId,
+                'api_key' => $apiKey,
+            ]);
         });
 
         return response()->json([
