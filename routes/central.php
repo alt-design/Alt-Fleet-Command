@@ -1,13 +1,25 @@
 <?php
 
+use AltDesign\FleetCommand\Http\Controllers\Central\ProvisioningController;
 use AltDesign\FleetCommand\Http\Controllers\Central\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('alt-fleet-cmd/oauth')
-    ->middleware(config('alt-fleet-cmd.central.passport_auth_guard'))
-    ->group(function () {
-    Route::get(
-        '/get-user',
-        [UserController::class, 'fetch']
-    );
+Route::prefix('alt-fleet-cmd')->group(function () {
+    Route::prefix('oauth')
+        ->middleware(config('alt-fleet-cmd.central.passport_auth_guard'))
+        ->group(function () {
+            Route::get(
+                '/get-user',
+                [UserController::class, 'fetch']
+            );
+        });
+
+    // Provisioning route protected by shared secret verification inside controller
+    Route::post(
+        '/provision',
+        [ProvisioningController::class, 'provision']
+    )
+        // Incredibly aggressive rate limit: 1 request per 60 minutes per IP
+        ->middleware('throttle:1,60')
+        ->name('alt-fleet-cmd.provision');
 });

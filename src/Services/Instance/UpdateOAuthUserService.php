@@ -20,11 +20,11 @@ class UpdateOAuthUserService
     {
         return Http::withToken($this->access_token)
             ->put(
-                Str::finish(config('alt-fleet-cmd.instance.central_url'), "/") .
-                "alt-fleet-cmd/oauth/update-user", [
+                Str::finish(config('alt-fleet-cmd.instance.central_url'), '/').
+                'alt-fleet-cmd/oauth/update-user', [
                     'user' => $this->user->toArray()['id'],
                     'fields' => json_encode($this->fields),
-                    'instance_url' => urlencode(config('app.url'))
+                    'instance_url' => urlencode(config('app.url')),
                 ]
             );
     }

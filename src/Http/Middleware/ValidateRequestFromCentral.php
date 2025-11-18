@@ -15,18 +15,18 @@ class ValidateRequestFromCentral
     /**
      * Handle an incoming request.
      *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         // Don't do anything if keys are missing
         $bearerHash = $request->bearerToken();
-        if (!$bearerHash) {
+        if (! $bearerHash) {
             return $this->unauthorisedResponse();
         }
 
         $apiKey = config('alt-fleet-cmd.instance.api_key');
-        if (!$apiKey) {
+        if (! $apiKey) {
             return $this->unauthorisedResponse();
         }
 

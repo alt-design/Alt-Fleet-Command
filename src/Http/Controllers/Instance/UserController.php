@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace AltDesign\FleetCommand\Http\Controllers\Instance;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UserController
 {
-    public function create( Request $request ): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
             'id' => 'required',
@@ -25,7 +25,7 @@ class UserController
             ], 400);
         }
 
-        $user = new $userModel();
+        $user = new $userModel;
         $user->fill($validatedData);
         $user->id = $validatedData['id'];
         $user->save();
