@@ -18,6 +18,7 @@ class PushUserToInstanceService
     ) {
         //
     }
+
     public function __invoke(): mixed
     {
         InstanceUser::grant($this->user, $this->instance);
@@ -25,7 +26,7 @@ class PushUserToInstanceService
         return Http::withToken(
             $this->instance->api_key
         )->post(
-            Str::finish($this->instance->base_url, "/") . "alt-fleet-cmd/users/create",
+            Str::finish($this->instance->base_url, '/').'alt-fleet-cmd/users/create',
             $this->user->toArray()
         );
     }

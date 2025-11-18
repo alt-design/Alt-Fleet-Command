@@ -18,6 +18,7 @@ class RevokeUserFromInstanceService
     ) {
         //
     }
+
     public function __invoke(): mixed
     {
         InstanceUser::revoke($this->user, $this->instance);
@@ -25,7 +26,7 @@ class RevokeUserFromInstanceService
         return Http::withToken(
             $this->instance->api_key
         )->delete(
-            Str::finish($this->instance->base_url, "/") . "alt-fleet-cmd/users/delete",
+            Str::finish($this->instance->base_url, '/').'alt-fleet-cmd/users/delete',
             $this->user->toArray()
         );
     }

@@ -5,11 +5,16 @@ use Illuminate\Support\Str;
 return [
     'configuration' => env('FLEET_COMMAND_CONFIGURATION', 'instance'),
 
+    'provisioning' => [
+        // Common secret used between instance and central during initial provisioning
+        'secret' => env('FLEET_CMD_PROVISIONING_SECRET'),
+    ],
+
     'oauth' => [
         'client_id' => env('FLEET_COMMAND_OAUTH_CLIENT_ID', null),
         'client_secret' => env('FLEET_COMMAND_OAUTH_CLIENT_SECRET', null),
         'host' => env('FLEET_COMMAND_CENTRAL_URL'),
-        'redirect' => Str::finish(env('APP_URL'), '/') . 'oauth/callback',
+        'redirect' => Str::finish(env('APP_URL'), '/').'oauth/callback',
     ],
 
     'instance' => [
@@ -21,5 +26,5 @@ return [
     'central' => [
         'user_model' => 'App\Models\User',
         'passport_auth_guard' => 'auth:api',
-    ]
+    ],
 ];

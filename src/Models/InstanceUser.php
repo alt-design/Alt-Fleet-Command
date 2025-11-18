@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AltDesign\FleetCommand\Models;
 
 use AltDesign\FleetCommand\DTO\UserDTO;
-use AltDesign\FleetCommand\Models\Passport\OAuthClient;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -15,7 +14,9 @@ class InstanceUser extends Model
     use HasUuids;
 
     protected $table = 'instance_users';
+
     protected $guarded = [];
+
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -24,19 +25,17 @@ class InstanceUser extends Model
     public static function grant(
         UserDTO $user,
         Instance $instance,
-    ): self
-    {
+    ): self {
         return self::firstOrCreate([
             'instance_id' => $instance->id,
-            'user_id' => $user->toArray()['id']
+            'user_id' => $user->toArray()['id'],
         ]);
     }
 
     public static function revoke(
         UserDTO $user,
         Instance $instance,
-    ): void
-    {
+    ): void {
         self::where('user_id', $user->toArray()['id'])
             ->where('instance_id', $instance->id)
             ->delete();
@@ -45,8 +44,7 @@ class InstanceUser extends Model
     public static function getUserInstance(
         UserDTO $user,
         Instance $instance,
-    ): mixed
-    {
+    ): mixed {
         return self::query()
             ->where('instance_id', $instance->id)
             ->where('user_id', $user->toArray()['id'])

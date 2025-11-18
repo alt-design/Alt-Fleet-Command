@@ -8,7 +8,7 @@ class UserDTO
         string|int $id,
         string $name,
         string $email,
-    ) : self {
+    ): self {
         return new self(
             id: $id,
             name: $name,
@@ -20,9 +20,7 @@ class UserDTO
         private string|int $id,
         private string $name,
         private string $email,
-    ) {
-
-    }
+    ) {}
 
     public function toArray(): array
     {

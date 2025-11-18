@@ -5,24 +5,42 @@
   "authors": [
     {
       "name": "Benammi Swift",
-      "email": "benammi@alt-design.net",
-      "homepage": "<https://alt-design.net/>"
+      "email": "benammi@alt-design.net"
     }
   ],
   "keywords": ["Laravel", "Blade", "Instances"],
   "require": {
     "illuminate/support": "*"
   },
+  "require-dev": {
+    "orchestra/testbench": "^9.0 || ^8.0",
+    "pestphp/pest": "^2.0",
+    "pestphp/pest-plugin-laravel": "^2.0",
+    "laravel/pint": "^1.25"
+  },
   "autoload": {
     "psr-4": {
       "AltDesign\\FleetCommand\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AltDesign\\FleetCommand\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "pest"
   },
   "extra": {
     "laravel": {
       "providers": [
         "AltDesign\\FleetCommand\\FleetCommandServiceProvider"
       ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
     }
   }
 }
