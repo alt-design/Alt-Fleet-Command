@@ -18,7 +18,8 @@ class FleetCommandServiceProvider extends ServiceProvider
             ->publishConfiguration()
             ->loadEnvironment()
             ->loadMiddlewares()
-            ->loadRoutes();
+            ->loadRoutes()
+            ->registerCommands();
     }
 
     public function publishMigrations(): self
@@ -101,6 +102,17 @@ class FleetCommandServiceProvider extends ServiceProvider
             }
         } catch (\Throwable $e) {
             // Silently ignore if DB not ready (e.g. before migrations)
+        }
+
+        return $this;
+    }
+
+    public function registerCommands(): self
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ProvisionInstance::class,
+            ]);
         }
 
         return $this;
