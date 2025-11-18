@@ -79,22 +79,17 @@ class ProvisionInstance extends Command
         }
 
         // Persist into environments table
-        try {
-            EnvironmentModel::setValue('FLEET_COMMAND_OAUTH_CLIENT_ID', (string) $clientId);
-            EnvironmentModel::setValue('FLEET_COMMAND_OAUTH_CLIENT_SECRET', (string) $clientSecret);
-            EnvironmentModel::setValue('FLEET_COMMAND_INSTANCE_API_KEY', (string) $apiKey);
+        EnvironmentModel::setValue('FLEET_COMMAND_OAUTH_CLIENT_ID', (string) $clientId);
+        EnvironmentModel::setValue('FLEET_COMMAND_OAUTH_CLIENT_SECRET', (string) $clientSecret);
+        EnvironmentModel::setValue('FLEET_COMMAND_INSTANCE_API_KEY', (string) $apiKey);
 
-            // Also set runtime config so the app can immediately use the values
-            Config::set('alt-fleet-cmd.oauth.client_id', $clientId);
-            Config::set('alt-fleet-cmd.oauth.client_secret', $clientSecret);
-            Config::set('alt-fleet-cmd.instance.api_key', $apiKey);
+        // Also set runtime config so the app can immediately use the values
+        Config::set('alt-fleet-cmd.oauth.client_id', $clientId);
+        Config::set('alt-fleet-cmd.oauth.client_secret', $clientSecret);
+        Config::set('alt-fleet-cmd.instance.api_key', $apiKey);
 
-            $this->info('Provisioned successfully. Credentials saved to environments table.');
-            EnvironmentModel::setValue('HAS_PROVISIONED', true);
-        } catch (\Throwable $e) {
-            Log::error('Failed to persist credentials to environments table: '.$e->getMessage());
-            $this->warn('Failed to persist credentials to environments table');
-        }
+        $this->info('Provisioned successfully. Credentials saved to environments table.');
+        EnvironmentModel::setValue('HAS_PROVISIONED', true);
 
         return self::SUCCESS;
     }
