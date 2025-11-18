@@ -18,5 +18,8 @@ Route::prefix('alt-fleet-cmd')->group(function () {
     Route::post(
         '/provision',
         [ProvisioningController::class, 'provision']
-    )->name('alt-fleet-cmd.provision');
+    )
+        // Incredibly aggressive rate limit: 1 request per 60 minutes per IP
+        ->middleware('throttle:1,60')
+        ->name('alt-fleet-cmd.provision');
 });
