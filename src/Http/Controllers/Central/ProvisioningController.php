@@ -34,17 +34,12 @@ class ProvisioningController
         $baseUrl = Str::finish((string) $request->string('base_url'), '/');
         $name = (string) $request->string('name');
 
-        // If instance already exists, return its credentials instead of creating duplicates
+        // If instance already exists, bail out and return the request without any credentials
         $existing = Instance::where('base_url', $baseUrl)->first();
         if ($existing) {
-            $client = OAuthClient::where('id', $existing->client_id)->first();
-
             return response()->json([
-                'client_id' => $existing->client_id,
-                'client_secret' => $client?->secret,
-                'api_key' => $existing->api_key,
-                'message' => 'Instance already provisioned.',
-            ]);
+                'message' => 'Bad Request',
+            ], 400);
         }
 
         $apiKey = Str::random(64);
