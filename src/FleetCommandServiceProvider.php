@@ -82,6 +82,9 @@ class FleetCommandServiceProvider extends ServiceProvider
 
     public function loadEnvironment(): self
     {
+        if (! config('alt-fleet-cmd.is_build_stage')) {
+            return $this;
+        }
         if (Schema::hasTable('environments')) {
             $map = [
                 'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
