@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace AltDesign\FleetCommand;
 
+use AltDesign\FleetCommand\Console\Commands\ProvisionInstance;
+use AltDesign\FleetCommand\Models\Environment as EnvironmentModel;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class FleetCommandServiceProvider extends ServiceProvider
@@ -12,6 +16,7 @@ class FleetCommandServiceProvider extends ServiceProvider
     {
         $this->publishMigrations()
             ->publishConfiguration()
+            ->loadEnvironment()
             ->loadMiddlewares()
             ->loadRoutes();
     }
@@ -19,11 +24,11 @@ class FleetCommandServiceProvider extends ServiceProvider
     public function publishMigrations(): self
     {
         $this->publishes([
-            __DIR__ . '/../database/migrations/central/' => database_path('migrations/alt-fleet-cmd'),
+            __DIR__.'/../database/migrations/central/' => database_path('migrations/alt-fleet-cmd'),
         ], 'alt-fleet-cmd-central-migrations');
 
         $this->publishes([
-            __DIR__ . '/../database/migrations/instance/' => database_path('migrations/alt-fleet-cmd'),
+            __DIR__.'/../database/migrations/instance/' => database_path('migrations/alt-fleet-cmd'),
         ], 'alt-fleet-cmd-instance-migrations');
 
         return $this;
@@ -32,7 +37,7 @@ class FleetCommandServiceProvider extends ServiceProvider
     public function publishConfiguration(): self
     {
         $this->publishes([
-            __DIR__ . '/../config/alt-fleet-cmd.php' => config_path('alt-fleet-cmd.php'),
+            __DIR__.'/../config/alt-fleet-cmd.php' => config_path('alt-fleet-cmd.php'),
         ], 'alt-fleet-cmd-config');
 
         return $this;
@@ -42,15 +47,15 @@ class FleetCommandServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/common.php');
         $packageConfig = config('alt-fleet-cmd.configuration');
-        if (!$packageConfig && ("testing" == env("APP_ENV"))) {
-            $packageConfig = env("FLEET_COMMAND_CONFIGURATION");;
+        if (! $packageConfig && (env('APP_ENV') == 'testing')) {
+            $packageConfig = env('FLEET_COMMAND_CONFIGURATION');
         }
         switch ($packageConfig) {
             case 'instance':
-                $this->loadRoutesFrom(__DIR__ . '/../routes/instance.php');
+                $this->loadRoutesFrom(__DIR__.'/../routes/instance.php');
                 break;
             case 'central':
-                $this->loadRoutesFrom(__DIR__ . '/../routes/central.php');
+                $this->loadRoutesFrom(__DIR__.'/../routes/central.php');
                 break;
             default:
                 throw new \Exception('Invalid Fleet Command Configuration : Please use instance or central');
@@ -66,6 +71,7 @@ class FleetCommandServiceProvider extends ServiceProvider
             'validate.central',
             \AltDesign\FleetCommand\Http\Middleware\ValidateRequestFromCentral::class
         );
+
         return $this;
     }
 
@@ -74,5 +80,29 @@ class FleetCommandServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/alt-fleet-cmd.php', 'alt-fleet-cmd'
         );
+    }
+
+    public function loadEnvironment(): self
+    {
+        try {
+            if (Schema::hasTable('environments')) {
+                $map = [
+                    'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
+                    'FLEET_COMMAND_OAUTH_CLIENT_SECRET' => 'alt-fleet-cmd.oauth.client_secret',
+                    'FLEET_COMMAND_INSTANCE_API_KEY' => 'alt-fleet-cmd.instance.api_key',
+                ];
+
+                foreach ($map as $envKey => $configKey) {
+                    $val = EnvironmentModel::getValue($envKey);
+                    if ($val !== null && $val !== '') {
+                        Config::set($configKey, $val);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Silently ignore if DB not ready (e.g. before migrations)
+        }
+
+        return $this;
     }
 }
