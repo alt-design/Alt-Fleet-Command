@@ -6,8 +6,8 @@ namespace AltDesign\FleetCommand;
 
 use AltDesign\FleetCommand\Console\Commands\ProvisionInstance;
 use AltDesign\FleetCommand\Models\Environment as EnvironmentModel;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -83,26 +83,46 @@ class FleetCommandServiceProvider extends ServiceProvider
 
     public function loadEnvironment(): self
     {
-        if ("instance" !== config('alt-fleet-cmd.configuration')) {
+        if ($this->databaseUnavailable()) {
             return $this;
         }
 
-        if (Schema::hasTable('environments')) {
-            $map = [
-                'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
-                'FLEET_COMMAND_OAUTH_CLIENT_SECRET' => 'alt-fleet-cmd.oauth.client_secret',
-                'FLEET_COMMAND_INSTANCE_API_KEY' => 'alt-fleet-cmd.instance.api_key',
-            ];
+        try {
+            if (Schema::hasTable('environments')) {
+                $map = [
+                    'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
+                    'FLEET_COMMAND_OAUTH_CLIENT_SECRET' => 'alt-fleet-cmd.oauth.client_secret',
+                    'FLEET_COMMAND_INSTANCE_API_KEY' => 'alt-fleet-cmd.instance.api_key',
+                ];
 
-            foreach ($map as $envKey => $configKey) {
-                $val = EnvironmentModel::getValue($envKey);
-                if ($val !== null && $val !== '') {
-                    Config::set($configKey, $val);
+                foreach ($map as $envKey => $configKey) {
+                    $val = EnvironmentModel::getValue($envKey);
+                    if ($val !== null && $val !== '') {
+                        Config::set($configKey, $val);
+                    }
                 }
             }
+        } catch (\Throwable $e) {
+            // Swallow exceptions to prevent boot failure during build/deploy where DB may not exist
         }
 
         return $this;
+    }
+
+    private function databaseUnavailable(): bool
+    {
+        try {
+            // If no default connection is configured, treat as unavailable
+            $default = config('database.default');
+            if (! $default) {
+                return true;
+            }
+
+            DB::connection($default)->getPdo();
+            return false;
+        } catch (\Throwable $e) {
+            return true;
+        }
     }
 
     public function registerCommands(): self
