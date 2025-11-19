@@ -83,23 +83,23 @@ class FleetCommandServiceProvider extends ServiceProvider
 
     public function loadEnvironment(): self
     {
-        try {
-            if (Schema::hasTable('environments')) {
-                $map = [
-                    'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
-                    'FLEET_COMMAND_OAUTH_CLIENT_SECRET' => 'alt-fleet-cmd.oauth.client_secret',
-                    'FLEET_COMMAND_INSTANCE_API_KEY' => 'alt-fleet-cmd.instance.api_key',
-                ];
+        if ("instance" !== config('alt-fleet-cmd.configuration')) {
+            return $this;
+        }
 
-                foreach ($map as $envKey => $configKey) {
-                    $val = EnvironmentModel::getValue($envKey);
-                    if ($val !== null && $val !== '') {
-                        Config::set($configKey, $val);
-                    }
+        if (Schema::hasTable('environments')) {
+            $map = [
+                'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
+                'FLEET_COMMAND_OAUTH_CLIENT_SECRET' => 'alt-fleet-cmd.oauth.client_secret',
+                'FLEET_COMMAND_INSTANCE_API_KEY' => 'alt-fleet-cmd.instance.api_key',
+            ];
+
+            foreach ($map as $envKey => $configKey) {
+                $val = EnvironmentModel::getValue($envKey);
+                if ($val !== null && $val !== '') {
+                    Config::set($configKey, $val);
                 }
             }
-        } catch (QueryException $e) {
-            // Catch this to avoid build stage issue when composer runs autodiscovery, allow other exceptions to bubble up
         }
 
         return $this;
