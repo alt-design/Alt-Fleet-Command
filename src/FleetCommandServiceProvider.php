@@ -6,6 +6,7 @@ namespace AltDesign\FleetCommand;
 
 use AltDesign\FleetCommand\Console\Commands\ProvisionInstance;
 use AltDesign\FleetCommand\Models\Environment as EnvironmentModel;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -82,22 +83,23 @@ class FleetCommandServiceProvider extends ServiceProvider
 
     public function loadEnvironment(): self
     {
-        if (! config('alt-fleet-cmd.is_build_stage')) {
-            return $this;
-        }
-        if (Schema::hasTable('environments')) {
-            $map = [
-                'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
-                'FLEET_COMMAND_OAUTH_CLIENT_SECRET' => 'alt-fleet-cmd.oauth.client_secret',
-                'FLEET_COMMAND_INSTANCE_API_KEY' => 'alt-fleet-cmd.instance.api_key',
-            ];
+        try {
+            if (Schema::hasTable('environments')) {
+                $map = [
+                    'FLEET_COMMAND_OAUTH_CLIENT_ID' => 'alt-fleet-cmd.oauth.client_id',
+                    'FLEET_COMMAND_OAUTH_CLIENT_SECRET' => 'alt-fleet-cmd.oauth.client_secret',
+                    'FLEET_COMMAND_INSTANCE_API_KEY' => 'alt-fleet-cmd.instance.api_key',
+                ];
 
-            foreach ($map as $envKey => $configKey) {
-                $val = EnvironmentModel::getValue($envKey);
-                if ($val !== null && $val !== '') {
-                    Config::set($configKey, $val);
+                foreach ($map as $envKey => $configKey) {
+                    $val = EnvironmentModel::getValue($envKey);
+                    if ($val !== null && $val !== '') {
+                        Config::set($configKey, $val);
+                    }
                 }
             }
+        } catch (QueryException $e) {
+            // Catch this to avoid build stage issue when composer runs autodiscovery, allow other exceptions to bubble up
         }
 
         return $this;
