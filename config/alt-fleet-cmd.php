@@ -3,7 +3,7 @@
 use Illuminate\Support\Str;
 
 return [
-    'is_build_stage' => (bool) env('IS_BUILD_STAGE', false),
+    'debug' => (bool) env('FLEET_COMMAND_DEBUG', false),
     'configuration' => env('FLEET_COMMAND_CONFIGURATION', 'instance'),
 
     'provisioning' => [
